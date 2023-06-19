@@ -30,4 +30,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapGet("/", () => @"Basic API only. Navigate to /swagger to open the Swagger test UI.");
+
 app.Run();

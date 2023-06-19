@@ -16,13 +16,13 @@ public class LinkService
         _context = context;
     }
 
-    public Link Create(string Url, int? userId)
+    public Link Create(string newUrl)
     {
         // TODO check if we have a valid user
 
         var newLink = new Link {
             ShortCode = RandomString(6, false),
-            Url = Url,
+            Url = newUrl,
             Active = true
         };
 
@@ -49,9 +49,18 @@ public class LinkService
         }        
     }
 
-    public string GetUrl(string? code) 
-    {
-        throw new NotImplementedException();
+    public string? GetUrlByShortCode(string? shortCode) 
+    { 
+        var link = _context.Links
+            .AsNoTracking()
+            .SingleOrDefault(p => p.ShortCode == shortCode);
+
+        if (link == null) {
+            return "";
+        } else {
+            return link.Url;
+        }
+        
     }
 
     public IEnumerable<Link> GetUserLinks(User user)

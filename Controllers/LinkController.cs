@@ -5,32 +5,33 @@ using Microsoft.AspNetCore.Mvc;
 namespace dotnet_url_shortner.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 
 public class LinkController : ControllerBase
 {
-    private LinkService _linkService;
+    private readonly LinkService _linkService;
+
     public LinkController(LinkService linkService)
     {
         _linkService = linkService;
     }
 
     [HttpGet("{code}")]
-    public ActionResult<string> Get(string? code) 
+    public ActionResult<string> GetUrlByShortCode(string? code) 
     {
-        var link = _linkService.GetUrl(code);
+        var link = _linkService.GetUrlByShortCode(code);
 
-        if (link == null) 
+        if (link == null)
             return NotFound();
 
         return link;
     }
 
     [HttpPost]
-    public IActionResult Create(string Url, int? userId)
+    public IActionResult Create(string url)
     {
-        var link = _linkService.Create(Url, userId);
-        return CreatedAtAction(nameof(Get), new { id = link.Id }, link);
+        var newLink = _linkService.Create(url);
+        return CreatedAtAction(nameof(GetUrlByShortCode), new { code = newLink.ShortCode }, newLink);
     }
 
     [HttpDelete("{code}")]
