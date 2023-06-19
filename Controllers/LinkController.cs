@@ -1,6 +1,5 @@
 using dotnet_url_shortner.Models;
 using dotnet_url_shortner.Services;
-using dotnet_url_shortner.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dotnet_url_shortner.Controllers;
@@ -28,21 +27,21 @@ public class LinkController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create(Link link)
+    public IActionResult Create(string Url, int? userId)
     {
-        _linkService.Add(link);
+        var link = _linkService.Create(Url, userId);
         return CreatedAtAction(nameof(Get), new { id = link.Id }, link);
     }
 
     [HttpDelete("{code}")]
     public IActionResult Delete(Link link)
     {
-        var testLink = _linkService.Get(link);
+        var testLink = _linkService.GetById(link.Id);
 
         if (testLink == null)
             return NotFound();
 
-        _linkService.Delete(testLink);
+        _linkService.DeleteById(testLink.Id);
 
         return NoContent();
     }

@@ -1,6 +1,7 @@
+using System.Text;
+using Microsoft.EntityFrameworkCore;
 using dotnet_url_shortner.Models;
 using dotnet_url_shortner.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_url_shortner.Services;
 
@@ -8,18 +9,23 @@ public class LinkService
 {
 
     private readonly UrlShortnerDb _context;
+    private readonly Random _random = new Random();
 
     public LinkService(UrlShortnerDb context)
     {
         _context = context;
     }
-    public void Add(Link link)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Link Create(Link newLink)
+    public Link Create(string Url, int? userId)
     {
+        // TODO check if we have a valid user
+
+        var newLink = new Link {
+            ShortCode = RandomString(6, false),
+            Url = Url,
+            Active = true
+        };
+
         _context.Links.Add(newLink);
         _context.SaveChanges();
 
@@ -43,16 +49,6 @@ public class LinkService
         }        
     }
 
-    public Link Get(Link link)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(Link link)
-    {
-        throw new NotImplementedException();
-    }
-
     public string GetUrl(string? code) 
     {
         throw new NotImplementedException();
@@ -63,5 +59,27 @@ public class LinkService
         return _context.Links
             .AsNoTracking()
             .ToList();
+    }
+
+    private string RandomString(int size, bool lowerCase = false)
+    {
+      var builder = new StringBuilder(size);
+
+      // Unicode/ASCII Letters are divided into two blocks
+      // (Letters 65–90 / 97–122):
+      // The first group containing the uppercase letters and
+      // the second group containing the lowercase.
+
+      // char is a single Unicode character
+      char offset = lowerCase ? 'a' : 'A';
+      const int lettersOffset = 26; // A...Z or a..z: length = 26
+
+      for (var i = 0; i < size; i++)
+      {
+        var @char = (char)_random.Next(offset, offset + lettersOffset);
+        builder.Append(@char);
+      }
+
+      return lowerCase ? builder.ToString().ToLower() : builder.ToString();
     }
 }
