@@ -58,6 +58,10 @@ public class LinkService
         if (link == null) {
             return "";
         } else {
+            // If we have a valid request we increment the hits and update the link
+            link.Hits++;
+            _context.Links.Update(link);
+            _context.SaveChanges();
             return link.Url;
         }
         
