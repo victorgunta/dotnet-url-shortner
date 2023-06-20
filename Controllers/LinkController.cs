@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using dotnet_url_shortner.Models;
 using dotnet_url_shortner.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace dotnet_url_shortner.Controllers;
 
