@@ -22,6 +22,6 @@ public class UrlController : ControllerBase
         if (link == "")
             return NotFound();
         else
-            return RedirectPermanent(link);
+            return Redirect(link);
     }
 }
