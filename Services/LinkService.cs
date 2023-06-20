@@ -23,7 +23,8 @@ public class LinkService
         var newLink = new Link {
             ShortCode = RandomString(6, false),
             Url = newUrl,
-            Active = true
+            LastUpdate = DateTime.UtcNow,
+            Expires = DateTime.UtcNow.AddDays(7)
         };
 
         _context.Links.Add(newLink);
@@ -56,15 +57,19 @@ public class LinkService
             .SingleOrDefault(p => p.ShortCode == shortCode);
 
         if (link == null) {
-            return "";
+            return "Not found";
         } else {
+            // First, check expiration
+            if (link.Expires < DateTime.UtcNow) 
+                return "Expired";
+
             // If we have a valid request we increment the hits and update the link
             link.Hits++;
+            link.LastUpdate = DateTime.UtcNow;
             _context.Links.Update(link);
             _context.SaveChanges();
             return link.Url;
         }
-        
     }
 
     public IEnumerable<Link> GetUserLinks(User user)
