@@ -1,16 +1,26 @@
 using dotnet_url_shortner.Models;
 using dotnet_url_shortner.Services;
 using dotnet_url_shortner.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("UrlShortnerDatabase");
+// Select the connection string based on environment
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<UrlShortnerDb>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("UrlShortnerDatabase_Development")));
+}
+else
+{
+    builder.Services.AddDbContext<UrlShortnerDb>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("UrlShortnerDatabase_Production")));
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSqlite<UrlShortnerDb>(connectionString);
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<LinkService>();
