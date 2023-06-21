@@ -4,10 +4,10 @@ using dotnet_url_shortner.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("UrlShortner") ?? "Data Source=UlrShortner.db";
+var connectionString = builder.Configuration.GetConnectionString("UrlShortnerDatabase");
 
 // Add services to the container.
-
+builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSqlite<UrlShortnerDb>(connectionString);
@@ -24,12 +24,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapGet("/", () => @"Basic API only. Navigate to /swagger to open the Swagger test UI.");
+app.MapRazorPages();
 
 app.Run();
