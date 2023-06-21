@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_url_shortner.Data;
 
@@ -10,9 +11,10 @@ using dotnet_url_shortner.Data;
 namespace dotnet_url_shortner.Migrations
 {
     [DbContext(typeof(UrlShortnerDb))]
-    partial class UrlShortnerDbModelSnapshot : ModelSnapshot
+    [Migration("20230620124521_AddUrlStats")]
+    partial class AddUrlStats
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");

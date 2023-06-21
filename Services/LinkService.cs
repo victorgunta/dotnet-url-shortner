@@ -2,18 +2,22 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using dotnet_url_shortner.Models;
 using dotnet_url_shortner.Data;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace dotnet_url_shortner.Services;
 
 public class LinkService
 {
 
-    private readonly UrlShortnerDb _context;
+    private readonly UrlShortnerDb _dbContext;
+    private readonly StatService _statService;
     private readonly Random _random = new Random();
 
-    public LinkService(UrlShortnerDb context)
+    public LinkService(UrlShortnerDb context, StatService statService)
     {
-        _context = context;
+        _dbContext = context;
+        _statService = statService;
     }
 
     public Link Create(string newUrl)
@@ -27,33 +31,32 @@ public class LinkService
             Expires = DateTime.UtcNow.AddDays(7)
         };
 
-        _context.Links.Add(newLink);
-        _context.SaveChanges();
+        _dbContext.Links.Add(newLink);
+        _dbContext.SaveChanges();
 
         return newLink;
     }
 
     public Link? GetById(int id)
     {
-        return _context.Links
+        return _dbContext.Links
             .AsNoTracking()
             .SingleOrDefault(p => p.Id == id);
     }
 
     public void DeleteById(int id)
     {
-        var link = _context.Links.Find(id);
+        var link = _dbContext.Links.Find(id);
         if (link is not null)
         {
-            _context.Links.Remove(link);
-            _context.SaveChanges();
+            _dbContext.Links.Remove(link);
+            _dbContext.SaveChanges();
         }        
     }
 
     public string? GetUrlByShortCode(string? shortCode) 
     { 
-        var link = _context.Links
-            .AsNoTracking()
+        var link = _dbContext.Links
             .SingleOrDefault(p => p.ShortCode == shortCode);
 
         if (link == null) {
@@ -66,15 +69,19 @@ public class LinkService
             // If we have a valid request we increment the hits and update the link
             link.Hits++;
             link.LastUpdate = DateTime.UtcNow;
-            _context.Links.Update(link);
-            _context.SaveChanges();
+
+            var newStat = _statService.Create(link);
+
+            //_dbContext.Stats.Add(newStat);
+            _dbContext.Links.Update(link);
+            _dbContext.SaveChanges();
             return link.Url;
         }
     }
 
     public IEnumerable<Link> GetUserLinks(User user)
     {
-        return _context.Links
+        return _dbContext.Links
             .AsNoTracking()
             .ToList();
     }

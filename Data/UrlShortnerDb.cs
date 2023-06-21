@@ -7,6 +7,6 @@ public class UrlShortnerDb : DbContext
 {
     public UrlShortnerDb(DbContextOptions options) : base(options) {}
     public DbSet<Link> Links => Set<Link>();
-
     public DbSet<User> Users => Set<User>();
+    public DbSet<Stat> Stats => Set<Stat>();
 }

@@ -1,4 +1,4 @@
-using dotnet_url_shortner.Models;
+using dotnet_url_shortner.Middleware;
 using dotnet_url_shortner.Services;
 using dotnet_url_shortner.Data;
 
@@ -13,7 +13,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSqlite<UrlShortnerDb>(connectionString);
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<LinkService>();
+builder.Services.AddScoped<StatService>();
 
 var app = builder.Build();
 
@@ -25,6 +27,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.SaveUserMetadata();
 
 app.UseAuthorization();
 
