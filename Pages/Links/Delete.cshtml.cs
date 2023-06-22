@@ -1,22 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using dotnet_url_shortner.Authorization;
 using dotnet_url_shortner.Data;
 using dotnet_url_shortner.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace dotnet_url_shortner.Pages.Links
 {
-    public class DeleteModel : PageModel
+    public class DeleteModel : BasePageModel
     {
-        private readonly dotnet_url_shortner.Data.UrlShortnerDb _context;
-
-        public DeleteModel(dotnet_url_shortner.Data.UrlShortnerDb context)
+        public DeleteModel(
+            UrlShortnerDb context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
+            : base(context, authorizationService, userManager)
         {
-            _context = context;
         }
 
         [BindProperty]
@@ -29,7 +29,7 @@ namespace dotnet_url_shortner.Pages.Links
                 return NotFound();
             }
 
-            Link = await _context.Links.FirstOrDefaultAsync(m => m.Id == id);
+            Link = await Context.Links.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Link == null)
             {
@@ -45,12 +45,12 @@ namespace dotnet_url_shortner.Pages.Links
                 return NotFound();
             }
 
-            Link = await _context.Links.FindAsync(id);
+            Link = await Context.Links.FindAsync(id);
 
             if (Link != null)
             {
-                _context.Links.Remove(Link);
-                await _context.SaveChangesAsync();
+                Context.Links.Remove(Link);
+                await Context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");

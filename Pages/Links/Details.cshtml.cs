@@ -1,25 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using dotnet_url_shortner.Data;
 using dotnet_url_shortner.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace dotnet_url_shortner.Pages.Links
 {
-    public class DetailsModel : PageModel
+    public class DetailsModel : BasePageModel
     {
-        private readonly dotnet_url_shortner.Data.UrlShortnerDb _context;
 
-        public DetailsModel(dotnet_url_shortner.Data.UrlShortnerDb context)
+        public DetailsModel(
+            UrlShortnerDb context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
+            : base(context, authorizationService, userManager)
         {
-            _context = context;
         }
 
-        public Link Link { get; set; }
+        public Link? Link { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,7 +27,7 @@ namespace dotnet_url_shortner.Pages.Links
                 return NotFound();
             }
 
-            Link = await _context.Links.FirstOrDefaultAsync(m => m.Id == id);
+            Link = await Context.Links.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Link == null)
             {

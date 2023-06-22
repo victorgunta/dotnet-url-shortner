@@ -18,8 +18,6 @@ public class LinkService
 
     public Link Create(string newUrl)
     {
-        // TODO check if we have a valid user
-
         var newLink = new Link {
             ShortCode = RandomString(6, false),
             Url = newUrl,
@@ -70,13 +68,6 @@ public class LinkService
             _context.SaveChanges();
             return link.Url;
         }
-    }
-
-    public IEnumerable<Link> GetUserLinks(User user)
-    {
-        return _context.Links
-            .AsNoTracking()
-            .ToList();
     }
 
     private string RandomString(int size, bool lowerCase = false)

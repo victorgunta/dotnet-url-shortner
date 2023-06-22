@@ -1,22 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using dotnet_url_shortner.Authorization;
 using dotnet_url_shortner.Data;
 using dotnet_url_shortner.Models;
 
 namespace dotnet_url_shortner.Pages.Links
 {
-    public class CreateModel : PageModel
+    public class CreateModel : BasePageModel
     {
-        private readonly dotnet_url_shortner.Data.UrlShortnerDb _context;
-
-        public CreateModel(dotnet_url_shortner.Data.UrlShortnerDb context)
+        public CreateModel(
+            UrlShortnerDb context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
+            : base(context, authorizationService, userManager)
         {
-            _context = context;
         }
 
         public IActionResult OnGet()
@@ -25,9 +23,8 @@ namespace dotnet_url_shortner.Pages.Links
         }
 
         [BindProperty]
-        public Link Link { get; set; }
+        public Link? Link { get; set; }
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -35,8 +32,16 @@ namespace dotnet_url_shortner.Pages.Links
                 return Page();
             }
 
-            _context.Links.Add(Link);
-            await _context.SaveChangesAsync();
+            Link.UserId = UserManager.GetUserId(User);
+
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, Link, LinkOperations.Create);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
+            Context.Links.Add(Link);
+            await Context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

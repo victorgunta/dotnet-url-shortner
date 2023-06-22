@@ -1,27 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using dotnet_url_shortner.Authorization;
 using dotnet_url_shortner.Data;
 using dotnet_url_shortner.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace dotnet_url_shortner.Pages.Links
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        private readonly dotnet_url_shortner.Data.UrlShortnerDb _context;
-
-        public EditModel(dotnet_url_shortner.Data.UrlShortnerDb context)
+        public EditModel(
+            UrlShortnerDb context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
+            : base(context, authorizationService, userManager)
         {
-            _context = context;
         }
 
         [BindProperty]
-        public Link Link { get; set; }
+        public Link? Link { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -30,11 +28,18 @@ namespace dotnet_url_shortner.Pages.Links
                 return NotFound();
             }
 
-            Link = await _context.Links.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (Link == null)
+            Link? link = await Context.Links.FirstOrDefaultAsync(m => m.Id == id);
+            if (link == null)
             {
                 return NotFound();
+            }
+
+            Link = link;
+
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, Link, LinkOperations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
             }
             return Page();
         }
@@ -48,11 +53,11 @@ namespace dotnet_url_shortner.Pages.Links
                 return Page();
             }
 
-            _context.Attach(Link).State = EntityState.Modified;
+            Context.Attach(Link).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,7 +76,7 @@ namespace dotnet_url_shortner.Pages.Links
 
         private bool LinkExists(int id)
         {
-            return _context.Links.Any(e => e.Id == id);
+            return Context.Links.Any(e => e.Id == id);
         }
     }
 }

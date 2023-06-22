@@ -1,29 +1,41 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using dotnet_url_shortner.Authorization;
 using dotnet_url_shortner.Data;
 using dotnet_url_shortner.Models;
 
 namespace dotnet_url_shortner.Pages.Links
 {
-    public class IndexModel : PageModel
+    public class IndexModel : BasePageModel
     {
-        private readonly dotnet_url_shortner.Data.UrlShortnerDb _context;
-
-        public IndexModel(dotnet_url_shortner.Data.UrlShortnerDb context)
+        public IndexModel(
+            UrlShortnerDb context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
+            : base(context, authorizationService, userManager)
         {
-            _context = context;
         }
 
-        public IList<Link> Link { get;set; }
+        public IList<Link> Links { get; set; }
 
         public async Task OnGetAsync()
         {
-            Link = await _context.Links.ToListAsync();
+            var links = from c in Context.Links
+                select c;
+
+            // First check if the user is Administrator or Manager
+            var isAuthorized = User.IsInRole(Constants.LinkManagersRole) || User.IsInRole(Constants.LinkAdministratorsRole);
+
+            var currentUserId = UserManager.GetUserId(User);
+
+            // Only approved links are shown UNLESS you're authorized to see them
+            // or you are the owner.
+            if (!isAuthorized)
+            {
+                links = links.Where(c => c.Active || c.UserId == currentUserId);
+            }
+
+            Links = await links.ToListAsync();
         }
     }
 }

@@ -2,7 +2,7 @@
 @model dotnet_url_shortner.Pages.Links.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Your URLs";
 }
 
 <h1>Index</h1>
@@ -14,28 +14,28 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Link[0].ShortCode)
+                @Html.DisplayNameFor(model => model.Links[0].ShortCode)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Link[0].Url)
+                @Html.DisplayNameFor(model => model.Links[0].Url)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Link[0].LastUpdate)
+                @Html.DisplayNameFor(model => model.Links[0].LastUpdate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Link[0].Expires)
+                @Html.DisplayNameFor(model => model.Links[0].Expires)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Link[0].Hits)
+                @Html.DisplayNameFor(model => model.Links[0].Hits)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Link[0].Active)
+                @Html.DisplayNameFor(model => model.Links[0].Active)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Link) {
+@foreach (var item in Model.Links) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ShortCode)

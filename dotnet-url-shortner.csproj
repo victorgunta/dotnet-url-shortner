@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>enable</ImplicitUsings>    
     <RootNamespace>dotnet_url_shortner</RootNamespace>
+    <UserSecretsId>1a5e226f-7d4f-4485-9e33-8933436c01b8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0" />    
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0" />
