@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using dotnet_url_shortner.Authorization;
 using dotnet_url_shortner.Data;
 using dotnet_url_shortner.Models;
