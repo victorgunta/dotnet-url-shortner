@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>    
     <RootNamespace>dotnet_url_shortner</RootNamespace>
     <UserSecretsId>1a5e226f-7d4f-4485-9e33-8933436c01b8</UserSecretsId>
