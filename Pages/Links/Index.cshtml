@@ -5,10 +5,10 @@
     ViewData["Title"] = "Your URLs";
 }
 
-<h1>Index</h1>
+<h1>Manage your URLs</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="./Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -35,7 +35,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Links) {
+        @foreach (var item in Model.Links) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ShortCode)
@@ -61,6 +61,6 @@
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>
